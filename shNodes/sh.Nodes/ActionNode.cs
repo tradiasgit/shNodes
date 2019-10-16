@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace sh.Nodes
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActionNode:Node
     {
 
