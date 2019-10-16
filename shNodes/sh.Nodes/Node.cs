@@ -20,12 +20,21 @@ namespace sh.Nodes
         }
         private static BsonDocument FindOne(string oid, string collectionName = "Nodes")
         {
-            var db = GetDatabase();
-            var coll = db.GetCollection<BsonDocument>(collectionName);
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(oid));
-            return coll.Find(filter).FirstOrDefault();
+            if (!_cache.ContainsKey(oid))
+            {
+                var db = GetDatabase();
+                var coll = db.GetCollection<BsonDocument>(collectionName);
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(oid));
+                var one= coll.Find(filter).FirstOrDefault();
+                _cache.Add(oid, one);
+            }
+            return _cache[oid];
+
+            
         }
         #endregion
+
+        private static Dictionary<string, BsonDocument> _cache = new Dictionary<string, BsonDocument>();
 
         public static Node GetNode(string id)
         {
@@ -79,7 +88,7 @@ namespace sh.Nodes
         protected static string GetString(BsonDocument doc, string name, bool readBase = true)
         {
             var value = GetElementValue(doc, name, readBase);
-            if (value!=null&&value.IsString) return value.AsString;
+            if (value != null && value.IsString) return value.AsString;
             return null;
         }
 
@@ -92,6 +101,7 @@ namespace sh.Nodes
             Id = GetString("Id", false);
             BasedOn = GetString("BasedOn", false);
             LoadBaseNode();
+            LoadChildren();
         }
 
         protected BsonDocument Data;
@@ -147,12 +157,12 @@ namespace sh.Nodes
                 var baseChildNodes = BaseNode.GetChildNodes(childrenFieldName);
                 result.AddRange(baseChildNodes);
             }
-            var childNodes = GetChildren(childrenFieldName, Data);
+            var childNodes = GetChildNodes(childrenFieldName, Data);
             result.AddRange(childNodes);
             return result;
         }
 
-        protected static ICollection<Node> GetChildren(string childrenFieldName, BsonDocument doc)
+        protected static ICollection<Node> GetChildNodes(string childrenFieldName, BsonDocument doc)
         {
             BsonElement childrenElement;
             var result = new List<Node>();
@@ -181,7 +191,7 @@ namespace sh.Nodes
         }
 
 
-
+        public virtual void LoadChildren() { }
 
 
     }

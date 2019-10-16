@@ -11,7 +11,14 @@ namespace sh.Nodes
     {
         public string Tooltip { get { return GetString(); } }
 
-        public ICollection<Node> ChildNodes { get { return GetChildNodes("ChildNodes"); } }
-        public ICollection<Node> Actions { get { return GetChildNodes("Actions"); } }
+        public ICollection<Node> ChildNodes { get; private set; }
+        public ICollection<Node> Actions { get; private set; }
+
+        public override void LoadChildren()
+        {
+            base.LoadChildren();
+            ChildNodes = GetChildNodes("ChildNodes");
+            Actions = GetChildNodes("Actions"); 
+        }
     }
 }
