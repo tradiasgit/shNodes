@@ -29,8 +29,6 @@ namespace sh.Nodes
                 _cache.Add(oid, one);
             }
             return _cache[oid];
-
-            
         }
         #endregion
 
@@ -48,8 +46,6 @@ namespace sh.Nodes
             {
                 "sh.Nodes",
             };
-
-
             var typestring = GetString(doc, "Type");
             if (string.IsNullOrWhiteSpace(typestring)) typestring = "TreeNode";
             if (!string.IsNullOrWhiteSpace(typestring))
@@ -120,7 +116,7 @@ namespace sh.Nodes
 
         #endregion
 
-        public bool HasBaseNode
+        protected bool HasBaseNode
         {
             get
             {

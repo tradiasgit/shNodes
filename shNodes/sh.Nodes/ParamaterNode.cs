@@ -1,29 +1,28 @@
 ﻿using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace sh.Nodes
 {
     public class ParamaterNode : Node
     {
-        public string GetStringValue()
-        {
-            return GetString("Value");
-        }
+        public string Value { get { return GetString(); } }
 
-        public KeyValuePair<string, string>? GetKVPairValue()
+        public string ParamaterType { get { return GetString(); } }
+
+        public Node ValueNode
         {
-            var value = GetElementValue(Data, "Value");
-            if (value != null && value.IsBsonDocument)
+            get
             {
-                var k = GetString(value.AsBsonDocument, "Key", false);
-                var v = GetString(value.AsBsonDocument, "Value", false);
-                return new KeyValuePair<string, string>(k,v);
+                BsonElement ele;
+                if (Data.TryGetElement("ValueNode", out ele)&&ele.Value.IsBsonDocument)
+                {
+                    var doc = ele.Value.AsBsonDocument;
+                    return GetNode(doc);
+                }
+                return null;
             }
-            return null;
         }
     }
 }
